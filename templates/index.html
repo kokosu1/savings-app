@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Financial Manager</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & Noto Sans JP -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons for Beautiful Dock -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
@@ -20,15 +17,11 @@
             font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif; 
             -webkit-font-smoothing: antialiased;
         }
-        /* Active Tab Underline styling */
         .sub-tab.active {
             color: #eab308; 
             border-bottom: 2px solid #eab308;
         }
-        /* Page transition animation */
-        .view-panel {
-            display: none;
-        }
+        .view-panel { display: none; }
         .view-panel.active {
             display: block;
             animation: iosSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -37,49 +30,53 @@
             from { transform: translateY(12px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
-        /* Modal Spec overlay blur */
         .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
             transition: opacity 0.25s ease;
         }
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal-container {
-            background: white;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 360px;
-            padding: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: white; border-radius: 20px;
+            width: 90%; max-width: 360px; padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             transform: scale(0.95);
             transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .modal-overlay.active .modal-container {
-            transform: scale(1);
+        .modal-overlay.active .modal-container { transform: scale(1); }
+
+        /* カレンダー日付 */
+        .cal-day {
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; margin: 0 auto;
+            font-size: 12px; cursor: pointer;
+            transition: background .15s;
         }
+        .cal-day:hover { background: #fef9c3; }
+        .cal-day.today { background: #fbbf24; color: white; font-weight: 700; }
+        .cal-day.selected { background: #1c1c1e; color: white; font-weight: 700; }
+        .cal-day.has-tx::after {
+            content: '';
+            display: block; width: 4px; height: 4px;
+            background: #eab308; border-radius: 50%;
+            margin: 1px auto 0;
+            position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+        }
+        .cal-day-wrapper { position: relative; }
     </style>
 </head>
 <body class="flex flex-col h-screen select-none overflow-hidden">
 
-    <!-- ───────────────── MAIN SCROLLABLE WRAPPER ───────────────── -->
     <main class="flex-1 overflow-y-auto px-4 pt-8 pb-28">
 
-        <!-- 🏠 HOME VIEW -->
+        <!-- 🏠 HOME -->
         <div id="view-home" class="view-panel space-y-6">
             <header class="flex justify-between items-end px-1">
                 <div>
@@ -90,15 +87,11 @@
                     <i class="fa-solid fa-user text-xs text-neutral-500"></i>
                 </div>
             </header>
-
-            <!-- Total Asset Card -->
             <div class="bg-white p-6 rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.02)] border border-neutral-100">
                 <span class="text-xs text-neutral-400 font-medium">現在の手持ち（生活費＋貯蓄）総額</span>
                 <div class="text-3xl font-bold mt-1 text-neutral-900" id="home-global-total">¥0</div>
                 <p class="text-[11px] text-emerald-500 font-medium mt-2" id="home-growth-status">生活防衛＆仕分けの管理が有効です</p>
             </div>
-
-            <!-- Quick Access Summary Grid -->
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-white p-4 rounded-xl border border-neutral-100">
                     <span class="text-[10px] text-neutral-400 font-semibold block">自由に使える生活費残高</span>
@@ -109,10 +102,8 @@
                     <span class="text-lg font-bold text-amber-500" id="home-total-saved">¥0</span>
                 </div>
             </div>
-            
-            <!-- Quick Help Hint -->
             <div class="p-4 bg-amber-50 text-amber-800 rounded-xl text-xs space-y-1 border border-amber-100/60">
-                <p class="font-bold">💡 お線の考え方</p>
+                <p class="font-bold">💡 お金の考え方</p>
                 <p>1. バイト代や給与が入ったら、「生活費」にまず貯金（残高追加）します。</p>
                 <p>2. 免許代などの目標へ、生活費からお金を「仕分け」します。</p>
                 <p>3. 普段の買い物は「生活費から出費」を記録することで、貯蓄が勝手に減るのを防ぎます。</p>
@@ -120,7 +111,7 @@
             </div>
         </div>
 
-        <!-- 📋 GOALS VIEW -->
+        <!-- 📋 GOALS -->
         <div id="view-goals" class="view-panel active space-y-5">
             <header class="flex justify-between items-end px-1">
                 <div>
@@ -129,118 +120,84 @@
                 </div>
                 <button class="text-3xl font-light text-amber-500 w-8 h-8 flex items-center justify-center" onclick="openModal('addGoalModal')">+</button>
             </header>
-
-            <!-- Unachieved vs Achieved Tabs -->
             <div class="flex border-b border-neutral-200/60 text-center">
                 <button id="subtab-unachieved" class="sub-tab flex-1 pb-2 text-sm font-semibold active" onclick="filterGoals(false)">未達成</button>
                 <button id="subtab-achieved" class="sub-tab flex-1 pb-2 text-sm font-semibold text-neutral-400" onclick="filterGoals(true)">達成済み</button>
             </div>
-
-            <!-- Goal Cards Grid -->
-            <div class="space-y-3" id="goals-list-container">
-                <!-- Dynamic cards injected via JS -->
-            </div>
+            <div class="space-y-3" id="goals-list-container"></div>
         </div>
 
-        <!-- ✅ RECORD VIEW -->
+        <!-- ✅ RECORD -->
         <div id="view-record" class="view-panel space-y-6">
             <header class="px-1">
                 <p class="text-xs text-neutral-400 font-medium uppercase">TRANSACTIONS</p>
                 <h1 class="text-3xl font-bold tracking-tight mt-1">記録・仕分け</h1>
             </header>
-
             <div class="bg-white p-6 rounded-2xl border border-neutral-100 space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-                <!-- Action Type Toggle -->
                 <div class="flex bg-neutral-100 p-1 rounded-xl">
                     <button id="toggle-deposit" class="flex-1 py-2 text-xs font-bold bg-white text-neutral-950 rounded-lg shadow-sm transition-all duration-200" onclick="setRecordType('deposit')">残高を追加</button>
                     <button id="toggle-transfer" class="flex-1 py-2 text-xs font-medium text-neutral-500 rounded-lg transition-all duration-200" onclick="setRecordType('transfer')">目標へ仕分け</button>
                     <button id="toggle-expense" class="flex-1 py-2 text-xs font-medium text-neutral-500 rounded-lg transition-all duration-200" onclick="setRecordType('expense')">生活費から出費</button>
                 </div>
-
-                <!-- Input Fields -->
                 <form id="record-form" onsubmit="handleRecordSubmit(event)" class="space-y-4">
-                    <div id="form-fields-wrapper">
-                        <!-- Dynamic select fields based on selection -->
-                    </div>
-
+                    <div id="form-fields-wrapper"></div>
                     <div>
                         <label class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider" id="label-amount">金額 (円)</label>
                         <input type="number" id="record-amount" class="w-full mt-1 p-3 bg-neutral-50 border border-neutral-200/80 rounded-xl text-sm focus:outline-none focus:border-amber-500" placeholder="¥ 10,000" min="1" required>
                     </div>
-
                     <div>
                         <label class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">メモ</label>
                         <input type="text" id="record-memo" class="w-full mt-1 p-3 bg-neutral-50 border border-neutral-200/80 rounded-xl text-sm focus:outline-none focus:border-amber-500" placeholder="例: 今月のバイト代、コンビニなど">
                     </div>
-
                     <button type="submit" id="submit-record-btn" class="w-full py-3.5 bg-amber-500 text-white font-bold text-sm rounded-xl active:scale-[0.98] transition-transform duration-100 mt-2">残高の追加を確定</button>
                 </form>
             </div>
         </div>
 
-        <!-- 🗓️ CALENDAR VIEW -->
+        <!-- 🗓️ CALENDAR -->
         <div id="view-calendar" class="view-panel space-y-6">
             <header class="px-1">
                 <p class="text-xs text-neutral-400 font-medium uppercase">HISTORY TIMELINE</p>
                 <h1 class="text-3xl font-bold tracking-tight mt-1">カレンダー</h1>
             </header>
-
-            <!-- Calendar Display -->
             <div class="bg-white p-5 rounded-2xl border border-neutral-100 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
                 <div class="flex justify-between items-center mb-4">
-                    <span class="font-bold text-sm text-neutral-800">2026年 6月</span>
+                    <span class="font-bold text-sm text-neutral-800" id="cal-month-label"></span>
                     <div class="flex gap-4 text-xs text-neutral-500">
-                        <button><i class="fa-solid fa-chevron-left"></i></button>
-                        <button><i class="fa-solid fa-chevron-right"></i></button>
+                        <button onclick="changeMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button onclick="changeMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
                     </div>
                 </div>
-                <div class="grid grid-cols-7 gap-y-3 text-center text-xs font-semibold text-neutral-400">
+                <div class="grid grid-cols-7 gap-y-1 text-center text-xs font-semibold text-neutral-400 mb-2">
                     <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
                 </div>
-                <div class="grid grid-cols-7 gap-y-3 mt-3 text-center text-xs text-neutral-800">
-                    <span class="text-neutral-300">31</span>
-                    <span>1</span><span>2</span><span class="bg-amber-100/60 text-amber-600 font-bold w-7 h-7 flex items-center justify-center rounded-full mx-auto">3</span><span>4</span><span>5</span><span>6</span>
-                    <span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span>
-                    <span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span>
-                    <span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span>
-                    <span>28</span><span>29</span><span>30</span><span class="text-neutral-300">1</span><span class="text-neutral-300">2</span><span class="text-neutral-300">3</span><span class="text-neutral-300">4</span>
-                </div>
+                <div class="grid grid-cols-7 gap-y-1" id="cal-grid"></div>
             </div>
-
-            <!-- Recent actions list -->
             <div class="space-y-2">
-                <p class="text-xs text-neutral-400 font-bold px-1">本日の取引履歴</p>
-                <div id="recent-transactions-container" class="space-y-2">
-                    <!-- Dynamic transactions timeline -->
-                </div>
+                <p class="text-xs text-neutral-400 font-bold px-1" id="cal-selected-label">今日の取引履歴</p>
+                <div id="recent-transactions-container" class="space-y-2"></div>
             </div>
         </div>
 
-        <!-- 📊 REPORT VIEW -->
+        <!-- 📊 REPORT -->
         <div id="view-report" class="view-panel space-y-6">
             <header class="px-1">
                 <p class="text-xs text-neutral-400 font-medium uppercase">ANALYTICS</p>
                 <h1 class="text-3xl font-bold tracking-tight mt-1">レポート</h1>
             </header>
-
             <div class="bg-white p-5 rounded-2xl border border-neutral-100 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-5">
                 <span class="text-xs font-bold text-neutral-500">目的別の貯金内訳比率</span>
-                <div class="space-y-4" id="report-chart-container">
-                    <!-- Dynamic chart rows -->
-                </div>
+                <div class="space-y-4" id="report-chart-container"></div>
             </div>
         </div>
-
     </main>
 
-    <!-- ── ➕ ADD GOAL MODAL ── -->
+    <!-- ADD GOAL MODAL -->
     <div class="modal-overlay" id="addGoalModal">
         <div class="modal-container">
-            <div class="modal-header flex justify-between items-center mb-4">
+            <div class="flex justify-between items-center mb-4">
                 <h3 class="font-bold text-neutral-900 text-[16px]">新規の貯蓄目標を追加</h3>
-                <button class="close-modal text-neutral-400 hover:text-neutral-600" onclick="closeModal('addGoalModal')">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+                <button class="text-neutral-400 hover:text-neutral-600" onclick="closeModal('addGoalModal')"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form id="add-goal-form" onsubmit="handleNewGoalSubmit(event)" class="space-y-4">
                 <div>
@@ -256,18 +213,16 @@
         </div>
     </div>
 
-    <!-- ── 🔧 ADJUST WALLET BALANCE MODAL ── -->
+    <!-- ADJUST WALLET MODAL -->
     <div class="modal-overlay" id="adjustWalletModal">
         <div class="modal-container">
-            <div class="modal-header flex justify-between items-center mb-4">
+            <div class="flex justify-between items-center mb-4">
                 <h3 class="font-bold text-neutral-900 text-[16px]">生活費残高を直接変更</h3>
-                <button class="close-modal text-neutral-400 hover:text-neutral-600" onclick="closeModal('adjustWalletModal')">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+                <button class="text-neutral-400 hover:text-neutral-600" onclick="closeModal('adjustWalletModal')"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form id="adjust-wallet-form" onsubmit="handleAdjustWalletSubmit(event)" class="space-y-4">
                 <div class="p-3 bg-neutral-50 rounded-xl text-xs text-neutral-500 border border-neutral-200/50">
-                    <i class="fa-solid fa-triangle-exclamation mr-1 text-amber-500"></i> 現在のリアルなお財布の中身や銀行口座残高とズレがある時に、ここの金額を直接正しい値に変更できます。
+                    <i class="fa-solid fa-triangle-exclamation mr-1 text-amber-500"></i> お財布や銀行残高とズレがある時に直接修正できます。
                 </div>
                 <div>
                     <label class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">新しい生活費の残高 (円)</label>
@@ -278,49 +233,144 @@
         </div>
     </div>
 
-    <!-- ───────────────── BOTTOM APP DOCK ───────────────── -->
+    <!-- BOTTOM NAV -->
     <nav class="fixed bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-neutral-200/70 flex justify-around py-3 px-2 text-[10px] z-50">
         <button id="dock-home" class="flex flex-col items-center gap-1 w-14 text-neutral-400 transition-colors" onclick="switchTab('home')">
-            <i class="fa-solid fa-house-chimney text-lg"></i>
-            <span class="font-medium">ホーム</span>
+            <i class="fa-solid fa-house-chimney text-lg"></i><span class="font-medium">ホーム</span>
         </button>
         <button id="dock-goals" class="flex flex-col items-center gap-1 w-14 text-amber-500 transition-colors" onclick="switchTab('goals')">
-            <i class="fa-solid fa-list-check text-lg"></i>
-            <span class="font-semibold">目標</span>
+            <i class="fa-solid fa-list-check text-lg"></i><span class="font-semibold">目標</span>
         </button>
         <button id="dock-record" class="flex flex-col items-center gap-1 w-14 text-neutral-400 transition-colors" onclick="switchTab('record')">
-            <i class="fa-solid fa-square-pen text-lg"></i>
-            <span class="font-medium">記録</span>
+            <i class="fa-solid fa-square-pen text-lg"></i><span class="font-medium">記録</span>
         </button>
         <button id="dock-calendar" class="flex flex-col items-center gap-1 w-14 text-neutral-400 transition-colors" onclick="switchTab('calendar')">
-            <i class="fa-solid fa-calendar-days text-lg"></i>
-            <span class="font-medium">カレンダー</span>
+            <i class="fa-solid fa-calendar-days text-lg"></i><span class="font-medium">カレンダー</span>
         </button>
         <button id="dock-report" class="flex flex-col items-center gap-1 w-14 text-neutral-400 transition-colors" onclick="switchTab('report')">
-            <i class="fa-solid fa-chart-pie text-lg"></i>
-            <span class="font-medium">レポート</span>
+            <i class="fa-solid fa-chart-pie text-lg"></i><span class="font-medium">レポート</span>
         </button>
     </nav>
 
-    <!-- ── CORE SCRIPT ── -->
     <script>
-        // Only initialized variable changed back to 0
-        let walletBalance = 0; 
-        
+        let walletBalance = 0;
         let goalsDataset = [];
-        let transactionHistory = [];
-        let currentRecordType = "deposit"; // "deposit", "transfer", "expense"
+        let transactionHistory = []; // { title, detail, amount, type, dateKey, time }
+        let currentRecordType = 'deposit';
 
-        function formatCurrency(num) {
-            return '¥' + parseInt(num).toLocaleString();
+        // カレンダー状態
+        const today = new Date();
+        let calYear  = today.getFullYear();
+        let calMonth = today.getMonth(); // 0-indexed
+        let selectedDateKey = toDateKey(today); // "YYYY-MM-DD"
+
+        function toDateKey(d) {
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        }
+        function formatCurrency(num) { return '¥' + parseInt(num).toLocaleString(); }
+
+        // ════════════════════════════════
+        //  カレンダー描画
+        // ════════════════════════════════
+        function renderCalendar() {
+            const label = document.getElementById('cal-month-label');
+            label.textContent = `${calYear}年 ${calMonth+1}月`;
+
+            // その月に取引がある日のセット
+            const txDays = new Set(transactionHistory.map(t => t.dateKey));
+
+            const grid = document.getElementById('cal-grid');
+            const firstDay = new Date(calYear, calMonth, 1).getDay(); // 0=日
+            const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+            const todayKey = toDateKey(today);
+
+            let html = '';
+
+            // 前月の空白
+            for (let i = 0; i < firstDay; i++) {
+                const prevDate = new Date(calYear, calMonth, -firstDay + i + 1);
+                html += `<div class="text-center text-neutral-300 text-xs py-1">${prevDate.getDate()}</div>`;
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateKey = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const isToday    = dateKey === todayKey;
+                const isSelected = dateKey === selectedDateKey;
+                const hasTx      = txDays.has(dateKey);
+
+                let cls = 'cal-day';
+                if (isSelected) cls += ' selected';
+                else if (isToday) cls += ' today';
+
+                html += `
+                    <div class="cal-day-wrapper text-center">
+                        <div class="${cls}" onclick="selectDate('${dateKey}')">${d}</div>
+                        ${hasTx ? '<div style="width:4px;height:4px;background:#eab308;border-radius:50%;margin:2px auto 0"></div>' : '<div style="height:6px"></div>'}
+                    </div>
+                `;
+            }
+
+            // 翌月の空白
+            const remaining = (7 - ((firstDay + daysInMonth) % 7)) % 7;
+            for (let i = 1; i <= remaining; i++) {
+                html += `<div class="text-center text-neutral-300 text-xs py-1">${i}</div>`;
+            }
+
+            grid.innerHTML = html;
+            renderDayTransactions(selectedDateKey);
         }
 
-        // Render goals in exact list layout
+        function changeMonth(dir) {
+            calMonth += dir;
+            if (calMonth > 11) { calMonth = 0; calYear++; }
+            if (calMonth < 0)  { calMonth = 11; calYear--; }
+            renderCalendar();
+        }
+
+        function selectDate(dateKey) {
+            selectedDateKey = dateKey;
+            renderCalendar();
+        }
+
+        function renderDayTransactions(dateKey) {
+            const [y, m, d] = dateKey.split('-');
+            document.getElementById('cal-selected-label').textContent = `${y}年${parseInt(m)}月${parseInt(d)}日の取引履歴`;
+
+            const container = document.getElementById('recent-transactions-container');
+            const txs = transactionHistory.filter(t => t.dateKey === dateKey);
+
+            if (txs.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white p-4 rounded-xl border border-neutral-100 text-center py-6 text-neutral-400 text-xs">
+                        この日の取引履歴はありません
+                    </div>`;
+                return;
+            }
+
+            let html = '';
+            txs.forEach(tx => {
+                let colorClass = 'text-emerald-500', sign = '+';
+                if (tx.type === 'expense')  { colorClass = 'text-rose-500';   sign = '-'; }
+                if (tx.type === 'transfer') { colorClass = 'text-indigo-500'; sign = '⇄'; }
+                html += `
+                    <div class="bg-white p-4 rounded-xl border border-neutral-100 flex justify-between items-center">
+                        <div>
+                            <p class="text-xs font-bold text-neutral-800">${escapeHtml(tx.title)}</p>
+                            <p class="text-[10px] text-neutral-400">${escapeHtml(tx.detail)} · ${tx.time}</p>
+                        </div>
+                        <span class="text-sm font-bold ${colorClass}">${sign}${formatCurrency(tx.amount)}</span>
+                    </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // ════════════════════════════════
+        //  目標
+        // ════════════════════════════════
         function renderGoalsList(showAchievedOnly) {
             const container = document.getElementById('goals-list-container');
             const filtered = goalsDataset.filter(g => g.isAchieved === showAchievedOnly);
-            
-            // Standard Card for Wallet (生活費) is ALWAYS displayed at the top of the unachieved list to serve as the core budget
+
             let walletHtml = '';
             if (!showAchievedOnly) {
                 walletHtml = `
@@ -331,10 +381,9 @@
                                 <span class="text-[9px] bg-white/20 text-white px-1.5 py-0.5 rounded font-medium">基本財布</span>
                             </div>
                             <p class="text-[10px] text-neutral-400">日々のお買い物や支払いは、ここから出費します</p>
-                            
                             <div class="pt-2 flex items-baseline gap-2">
                                 <span class="text-2xl font-bold">${formatCurrency(walletBalance)}</span>
-                                <button onclick="triggerAdjustWallet(event)" class="text-neutral-400 hover:text-white p-1 text-sm transition-colors" title="生活費残高を直接変更">
+                                <button onclick="triggerAdjustWallet(event)" class="text-neutral-400 hover:text-white p-1 text-sm transition-colors">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
                             </div>
@@ -342,445 +391,260 @@
                         <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center shrink-0">
                             <i class="fa-solid fa-wallet text-lg text-amber-400"></i>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }
 
-            if (goalsDataset.length === 0) {
+            if (filtered.length === 0) {
                 container.innerHTML = walletHtml + `
-                    <div class="text-center py-12 bg-white rounded-2xl border border-neutral-100 p-6 shadow-[0_1px_3px_rgba(0,0,0,0.01)] mt-3">
+                    <div class="text-center py-12 bg-white rounded-2xl border border-neutral-100 p-6 mt-3">
                         <i class="fa-solid fa-piggy-bank text-3xl text-neutral-300 block mb-3"></i>
-                        <h3 class="font-bold text-sm text-neutral-800">仕分け用の目標がありません</h3>
-                        <p class="text-[11px] text-neutral-400 mt-1">生活費からお金を移すための目標（免許代など）を、<br>右上の「＋」ボタンから作成しましょう！</p>
-                    </div>
-                `;
+                        <h3 class="font-bold text-sm text-neutral-800">${showAchievedOnly ? '達成済みの目標はありません' : '仕分け用の目標がありません'}</h3>
+                        ${!showAchievedOnly ? '<p class="text-[11px] text-neutral-400 mt-1">右上の「＋」ボタンから目標を追加しましょう！</p>' : ''}
+                    </div>`;
                 return;
             }
 
             let html = walletHtml;
             filtered.forEach(g => {
-                const percentage = Math.min((g.currentAmount / g.targetAmount) * 100, 100);
-                const perimeter = 125.6; 
-                const offset = perimeter - (percentage / 100) * perimeter;
-
+                const pct = Math.min((g.currentAmount / g.targetAmount) * 100, 100);
+                const perimeter = 125.6;
+                const offset = perimeter - (pct / 100) * perimeter;
                 html += `
                     <div class="bg-white p-4 flex justify-between items-center rounded-2xl border border-neutral-100 shadow-[0_1px_3px_rgba(0,0,0,0.015)] relative mt-3">
                         <div class="space-y-0.5 pr-2 flex-1">
                             <div class="flex items-center gap-2">
                                 <h2 class="font-bold text-[16px] text-neutral-900 leading-tight">${escapeHtml(g.name)}</h2>
-                                <button onclick="deleteGoal(${g.id})" class="text-neutral-300 hover:text-red-500 text-[11px] p-1 transition-colors" title="目標を削除">
+                                <button onclick="deleteGoal(${g.id})" class="text-neutral-300 hover:text-red-500 text-[11px] p-1 transition-colors">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>
                             <p class="text-[10px] text-neutral-400">作成日: ${g.dateCreated}</p>
-                            
                             <div class="flex items-baseline gap-1 pt-1.5">
                                 <span class="text-[15px] font-bold text-neutral-800">${formatCurrency(g.currentAmount)}</span>
                                 <span class="text-[10px] text-neutral-400">/ ${formatCurrency(g.targetAmount)}</span>
                             </div>
                         </div>
-                        
-                        <!-- Circular Progress Badge -->
                         <div class="relative flex items-center justify-center w-14 h-14 shrink-0">
                             <svg class="w-full h-full transform -rotate-90">
                                 <circle cx="28" cy="28" r="20" stroke="#f4f4f5" stroke-width="4" fill="transparent"/>
                                 <circle cx="28" cy="28" r="20" stroke="#eab308" stroke-width="4" fill="transparent"
                                         stroke-dasharray="${perimeter}" stroke-dashoffset="${offset}" stroke-linecap="round"/>
                             </svg>
-                            <span class="absolute text-[10px] font-bold text-neutral-800">${percentage.toFixed(1)}%</span>
+                            <span class="absolute text-[10px] font-bold text-neutral-800">${pct.toFixed(1)}%</span>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
             container.innerHTML = html;
         }
 
-        // Sub tab switcher (未達成 / 達成済み)
         function filterGoals(showAchieved) {
             document.getElementById('subtab-unachieved').classList.toggle('active', !showAchieved);
             document.getElementById('subtab-unachieved').classList.toggle('text-neutral-400', showAchieved);
             document.getElementById('subtab-achieved').classList.toggle('active', showAchieved);
             document.getElementById('subtab-achieved').classList.toggle('text-neutral-400', !showAchieved);
-            
             renderGoalsList(showAchieved);
         }
 
-        // Add a completely new custom goal
         function handleNewGoalSubmit(event) {
             event.preventDefault();
-            const name = document.getElementById('new-goal-name').value;
+            const name   = document.getElementById('new-goal-name').value;
             const target = parseInt(document.getElementById('new-goal-target').value);
-            
-            const today = new Date();
-            const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
-
-            const newGoal = {
-                id: Date.now(),
-                name: name,
-                dateCreated: dateStr,
-                currentAmount: 0,
-                targetAmount: target,
-                isAchieved: false
-            };
-
-            goalsDataset.push(newGoal);
-
+            const d = new Date();
+            goalsDataset.push({
+                id: Date.now(), name,
+                dateCreated: `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`,
+                currentAmount: 0, targetAmount: target, isAchieved: false
+            });
             document.getElementById('new-goal-name').value = '';
             document.getElementById('new-goal-target').value = '';
             closeModal('addGoalModal');
-
             updateDashboardStates();
         }
 
-        // Delete goal helper
         function deleteGoal(id) {
-            if (!confirm("この目標を削除してもよろしいですか？\n(貯金や仕分けの履歴データも消去されます)")) return;
+            if (!confirm('この目標を削除してもよろしいですか？')) return;
             goalsDataset = goalsDataset.filter(g => g.id !== id);
             updateDashboardStates();
         }
 
-        // Trigger Wallet Balance Direct Adjust Modal
+        // ════════════════════════════════
+        //  記録フォーム
+        // ════════════════════════════════
+        function setRecordType(type) {
+            currentRecordType = type;
+            ['deposit','transfer','expense'].forEach(t => {
+                document.getElementById(`toggle-${t}`).className =
+                    t === type
+                    ? 'flex-1 py-2 text-xs font-bold bg-white text-neutral-950 rounded-lg shadow-sm transition-all duration-200'
+                    : 'flex-1 py-2 text-xs font-medium text-neutral-500 rounded-lg transition-all duration-200';
+            });
+            const submitBtn = document.getElementById('submit-record-btn');
+            const labels = { deposit: ['追加する金額 (円)', '生活費残高を追加', 'bg-amber-500'],
+                             transfer: ['仕分けする金額 (円)', '目標への仕分けを確定', 'bg-indigo-600'],
+                             expense:  ['出費金額 (円)', '生活費からの出費を保存', 'bg-rose-500'] };
+            document.getElementById('label-amount').innerText = labels[type][0];
+            submitBtn.innerText = labels[type][1];
+            submitBtn.className = `w-full py-3.5 ${labels[type][2]} text-white font-bold text-sm rounded-xl active:scale-[0.98] transition-transform duration-100 mt-2`;
+            syncGoalSelector();
+        }
+
+        function syncGoalSelector() {
+            const wrapper = document.getElementById('form-fields-wrapper');
+            if (currentRecordType === 'deposit') {
+                wrapper.innerHTML = `<div class="p-3 bg-neutral-50 rounded-xl text-xs text-neutral-500 border border-neutral-200/50"><i class="fa-solid fa-info-circle mr-1"></i> バイト代や給与はまず「生活費」に加算されます。</div>`;
+                enableFormInputs(true);
+            } else if (currentRecordType === 'transfer') {
+                if (goalsDataset.length === 0) {
+                    wrapper.innerHTML = `<div class="p-4 bg-neutral-50 border border-dashed border-neutral-200 rounded-xl text-center text-xs text-neutral-500">仕分け先の目標がありません</div>`;
+                    enableFormInputs(false); return;
+                }
+                wrapper.innerHTML = `
+                    <div>
+                        <label class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">仕分け先の貯金目標</label>
+                        <select id="record-goal-select" class="w-full mt-1 p-3 bg-neutral-50 border border-neutral-200/80 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                            ${goalsDataset.map(g => `<option value="${g.id}">${escapeHtml(g.name)} (${formatCurrency(g.currentAmount)})</option>`).join('')}
+                        </select>
+                    </div>`;
+                enableFormInputs(true);
+            } else {
+                wrapper.innerHTML = `<div class="p-3 bg-neutral-50 rounded-xl text-xs text-neutral-500 border border-neutral-200/50"><i class="fa-solid fa-wallet mr-1"></i> 日常の買い物や出費を記録します。生活費残高から差し引かれます。</div>`;
+                enableFormInputs(true);
+            }
+        }
+
+        function enableFormInputs(on) {
+            document.getElementById('record-amount').disabled = !on;
+            document.getElementById('record-memo').disabled   = !on;
+            const btn = document.getElementById('submit-record-btn');
+            btn.disabled = !on;
+            btn.style.opacity = on ? 1 : 0.4;
+        }
+
+        function handleRecordSubmit(event) {
+            event.preventDefault();
+            const amount  = parseInt(document.getElementById('record-amount').value);
+            const memo    = document.getElementById('record-memo').value || 'メモなし';
+            const now     = new Date();
+            const dateKey = toDateKey(now);
+            const time    = now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+
+            if (currentRecordType === 'deposit') {
+                walletBalance += amount;
+                transactionHistory.unshift({ title: '生活費の追加', detail: memo, amount, type: 'deposit', dateKey, time });
+            } else if (currentRecordType === 'transfer') {
+                const sel = document.getElementById('record-goal-select');
+                if (!sel) return;
+                const goal = goalsDataset.find(g => g.id === parseInt(sel.value));
+                if (!goal) return;
+                if (walletBalance < amount) { alert(`生活費残高（${formatCurrency(walletBalance)}）が足りません。`); return; }
+                walletBalance -= amount;
+                goal.currentAmount += amount;
+                goal.isAchieved = goal.currentAmount >= goal.targetAmount;
+                transactionHistory.unshift({ title: `${goal.name} へ仕分け`, detail: memo, amount, type: 'transfer', dateKey, time });
+            } else {
+                if (walletBalance < amount) { alert(`生活費残高（${formatCurrency(walletBalance)}）が足りません。`); return; }
+                walletBalance -= amount;
+                transactionHistory.unshift({ title: '生活費からの出費', detail: memo, amount, type: 'expense', dateKey, time });
+            }
+            document.getElementById('record-amount').value = '';
+            document.getElementById('record-memo').value   = '';
+            updateDashboardStates();
+            switchTab('home');
+        }
+
+        // ════════════════════════════════
+        //  残高直接修正
+        // ════════════════════════════════
         function triggerAdjustWallet(event) {
             event.stopPropagation();
             document.getElementById('new-wallet-value').value = walletBalance;
             openModal('adjustWalletModal');
         }
-
-        // Handle Direct Wallet Adjust Submission
         function handleAdjustWalletSubmit(event) {
             event.preventDefault();
-            const newValue = parseInt(document.getElementById('new-wallet-value').value);
-            const oldValue = walletBalance;
-            walletBalance = newValue;
-
-            // Log adjustment in calendar history
+            const newVal = parseInt(document.getElementById('new-wallet-value').value);
+            const oldVal = walletBalance;
+            walletBalance = newVal;
+            const now = new Date();
             transactionHistory.unshift({
-                title: "生活費の残高調整",
-                detail: `残高を ${formatCurrency(oldValue)} から ${formatCurrency(newValue)} に直接修正しました。`,
-                amount: Math.abs(newValue - oldValue),
-                type: newValue >= oldValue ? "deposit" : "expense",
-                time: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+                title: '生活費の残高調整', detail: `${formatCurrency(oldVal)} → ${formatCurrency(newVal)}`,
+                amount: Math.abs(newVal - oldVal), type: newVal >= oldVal ? 'deposit' : 'expense',
+                dateKey: toDateKey(now), time: now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
             });
-
             closeModal('adjustWalletModal');
             updateDashboardStates();
         }
 
-        // Set form states based on Record Actions Toggle (Deposit, Transfer, Expense)
-        function setRecordType(type) {
-            currentRecordType = type;
-            const depBtn = document.getElementById('toggle-deposit');
-            const trsfBtn = document.getElementById('toggle-transfer');
-            const expBtn = document.getElementById('toggle-expense');
-
-            // Reset buttons active appearance
-            [depBtn, trsfBtn, expBtn].forEach(btn => {
-                btn.className = "flex-1 py-2 text-xs font-medium text-neutral-500 rounded-lg transition-all duration-200";
-            });
-
-            const submitBtn = document.getElementById('submit-record-btn');
-
-            if (type === 'deposit') {
-                depBtn.className = "flex-1 py-2 text-xs font-bold bg-white text-neutral-950 rounded-lg shadow-sm transition-all duration-200";
-                document.getElementById('label-amount').innerText = "追加する金額 (円)";
-                submitBtn.innerText = "生活費残高を追加";
-                submitBtn.className = "w-full py-3.5 bg-amber-500 text-white font-bold text-sm rounded-xl active:scale-[0.98] transition-all duration-100 mt-2";
-            } else if (type === 'transfer') {
-                trsfBtn.className = "flex-1 py-2 text-xs font-bold bg-white text-neutral-950 rounded-lg shadow-sm transition-all duration-200";
-                document.getElementById('label-amount').innerText = "仕分けする金額 (円)";
-                submitBtn.innerText = "目標への仕分けを確定";
-                submitBtn.className = "w-full py-3.5 bg-indigo-600 text-white font-bold text-sm rounded-xl active:scale-[0.98] transition-all duration-100 mt-2";
-            } else {
-                expBtn.className = "flex-1 py-2 text-xs font-bold bg-white text-neutral-950 rounded-lg shadow-sm transition-all duration-200";
-                document.getElementById('label-amount').innerText = "出費金額 (円)";
-                submitBtn.innerText = "生活費からの出費を保存";
-                submitBtn.className = "w-full py-3.5 bg-rose-500 text-white font-bold text-sm rounded-xl active:scale-[0.98] transition-all duration-100 mt-2";
-            }
-
-            syncGoalSelector();
-        }
-
-        // Rebuild dynamic select dropdowns based on record type
-        function syncGoalSelector() {
-            const wrapper = document.getElementById('form-fields-wrapper');
-            
-            if (currentRecordType === 'deposit') {
-                wrapper.innerHTML = `
-                    <div class="p-3 bg-neutral-50 rounded-xl text-xs text-neutral-500 border border-neutral-200/50">
-                        <i class="fa-solid fa-info-circle mr-1"></i> 手元に入ったお金や給与、アルバイト代はまず「生活費」に加算されます。
-                    </div>
-                `;
-                enableFormInputs(true);
-            } else if (currentRecordType === 'transfer') {
-                if (goalsDataset.length === 0) {
-                    wrapper.innerHTML = `
-                        <div class="p-4 bg-neutral-50 border border-dashed border-neutral-200 rounded-xl text-center space-y-2">
-                            <p class="text-xs text-neutral-500 font-medium">仕分け先の目標がありません</p>
-                            <button type="button" onclick="openModal('addGoalModal'); switchTab('goals');" class="text-xs text-amber-500 font-bold hover:underline">
-                                目標を追加して仕分ける
-                            </button>
-                        </div>
-                    `;
-                    enableFormInputs(false);
-                    return;
-                }
-                
-                wrapper.innerHTML = `
-                    <div>
-                        <label class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">仕分け先の貯金目標</label>
-                        <select id="record-goal-select" class="w-full mt-1 p-3 bg-neutral-50 border border-neutral-200/80 rounded-xl text-sm focus:outline-none focus:border-amber-500">
-                            <!-- Options injected below -->
-                        </select>
-                        <p class="text-[10px] text-neutral-400 mt-1">※ 生活費の残高から指定 of 貯金目標にお金が移動します。</p>
-                    </div>
-                `;
-                
-                const selectEl = document.getElementById('record-goal-select');
-                let options = '';
-                goalsDataset.forEach(g => {
-                    options += `<option value="${g.id}">${escapeHtml(g.name)} (現在の貯蓄: ${formatCurrency(g.currentAmount)})</option>`;
-                });
-                selectEl.innerHTML = options;
-                enableFormInputs(true);
-            } else {
-                wrapper.innerHTML = `
-                    <div class="p-3 bg-neutral-50 rounded-xl text-xs text-neutral-500 border border-neutral-200/50">
-                        <i class="fa-solid fa-wallet mr-1"></i> 日常の買い物や出費を記録します。「生活費の残高」から直接差し引かれ、目標の貯蓄額は減りません。
-                    </div>
-                `;
-                enableFormInputs(true);
-            }
-        }
-
-        // Enable or Disable Record Form inputs safely
-        function enableFormInputs(isEnabled) {
-            document.getElementById('record-amount').disabled = !isEnabled;
-            document.getElementById('record-memo').disabled = !isEnabled;
-            
-            const submitBtn = document.getElementById('submit-record-btn');
-            submitBtn.disabled = !isEnabled;
-            submitBtn.style.opacity = isEnabled ? 1.0 : 0.4;
-        }
-
-        // Handle record submit with proper financial system mapping
-        function handleRecordSubmit(event) {
-            event.preventDefault();
-            const amount = parseInt(document.getElementById('record-amount').value);
-            const memo = document.getElementById('record-memo').value || "メモなし";
-
-            if (currentRecordType === 'deposit') {
-                walletBalance += amount;
-                
-                transactionHistory.unshift({
-                    title: "生活費の追加",
-                    detail: memo,
-                    amount: amount,
-                    type: "deposit",
-                    time: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
-                });
-            } else if (currentRecordType === 'transfer') {
-                const selectEl = document.getElementById('record-goal-select');
-                if (!selectEl) {
-                    alert("仕分け先の目標を選択してください。");
-                    return;
-                }
-
-                const goalId = parseInt(selectEl.value);
-                const goal = goalsDataset.find(g => g.id === goalId);
-                
-                if (!goal) {
-                    alert("選択された目標が見つかりません。");
-                    return;
-                }
-
-                if (walletBalance < amount) {
-                    alert(`生活費の残高（${formatCurrency(walletBalance)}）が足りません。\n先に「残高を追加」するか生活費を修正してください。`);
-                    return;
-                }
-
-                // Deduct from primary budget and add to secondary target
-                walletBalance -= amount;
-                goal.currentAmount += amount;
-
-                // Sync achieved target flag
-                goal.isAchieved = (goal.currentAmount >= goal.targetAmount);
-
-                transactionHistory.unshift({
-                    title: `${goal.name} へ仕分け`,
-                    detail: memo,
-                    amount: amount,
-                    type: "transfer",
-                    time: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
-                });
-            } else {
-                if (walletBalance < amount) {
-                    alert(`生活費の残高（${formatCurrency(walletBalance)}）が足りません。\nお財布にチャージするか生活費を修正してください。`);
-                    return;
-                }
-
-                walletBalance -= amount;
-
-                transactionHistory.unshift({
-                    title: "生活費からの出費",
-                    detail: memo,
-                    amount: amount,
-                    type: "expense",
-                    time: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
-                });
-            }
-
-            document.getElementById('record-amount').value = '';
-            document.getElementById('record-memo').value = '';
-            
-            updateDashboardStates();
-            switchTab('home'); 
-        }
-
-        // Synchronize and recompute overall states
+        // ════════════════════════════════
+        //  ダッシュボード更新
+        // ════════════════════════════════
         function updateDashboardStates() {
-            let totalSavingsOnly = goalsDataset.reduce((sum, g) => sum + g.currentAmount, 0);
-            let totalPortfolio = walletBalance + totalSavingsOnly;
-
-            // Re-render Global Banners
-            document.getElementById('home-global-total').innerText = formatCurrency(totalPortfolio);
+            const totalSaved = goalsDataset.reduce((s, g) => s + g.currentAmount, 0);
+            document.getElementById('home-global-total').innerText   = formatCurrency(walletBalance + totalSaved);
             document.getElementById('home-wallet-balance').innerText = formatCurrency(walletBalance);
-            document.getElementById('home-total-saved').innerText = formatCurrency(totalSavingsOnly);
+            document.getElementById('home-total-saved').innerText    = formatCurrency(totalSaved);
+            const st = document.getElementById('home-growth-status');
+            st.innerText   = goalsDataset.length === 0 ? 'まだ登録された目標がありません' : 'アクティブな目標を追跡中';
+            st.className   = `text-[11px] ${goalsDataset.length === 0 ? 'text-neutral-400' : 'text-emerald-500'} font-medium mt-2`;
 
-            const statusText = document.getElementById('home-growth-status');
-            if (goalsDataset.length === 0) {
-                statusText.innerText = "まだ登録された目標がありません";
-                statusText.className = "text-[11px] text-neutral-400 font-medium mt-2";
-            } else {
-                statusText.innerText = "アクティブな目標を追跡中";
-                statusText.className = "text-[11px] text-emerald-500 font-medium mt-2";
-            }
-
-            // Sync lists & details
-            const currentSubtabState = document.getElementById('subtab-achieved').classList.contains('active');
-            renderGoalsList(currentSubtabState);
+            const isAchievedTab = document.getElementById('subtab-achieved').classList.contains('active');
+            renderGoalsList(isAchievedTab);
             renderReportChart();
-            renderCalendarTimeline();
+            renderCalendar();
             syncGoalSelector();
         }
 
-        // Re-render Timeline
-        function renderCalendarTimeline() {
-            const container = document.getElementById('recent-transactions-container');
-            if (transactionHistory.length === 0) {
-                container.innerHTML = `
-                    <div class="bg-white p-4 rounded-xl border border-neutral-100 text-center py-6 text-neutral-400 text-xs">
-                        <span>本日の取引履歴はありません</span>
-                    </div>
-                `;
-                return;
-            }
-
-            let html = '';
-            transactionHistory.forEach(tx => {
-                let colorClass = 'text-emerald-500';
-                let sign = '+';
-                
-                if (tx.type === 'expense') {
-                    colorClass = 'text-rose-500';
-                    sign = '-';
-                } else if (tx.type === 'transfer') {
-                    colorClass = 'text-indigo-500';
-                    sign = '⇄';
-                }
-
-                html += `
-                    <div class="bg-white p-4 rounded-xl border border-neutral-100 flex justify-between items-center">
-                        <div>
-                            <p class="text-xs font-bold text-neutral-800">${escapeHtml(tx.title)}</p>
-                            <p class="text-[10px] text-neutral-400">${escapeHtml(tx.detail)}</p>
-                        </div>
-                        <span class="text-sm font-bold ${colorClass}">${sign}${formatCurrency(tx.amount)}</span>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        // Re-render analytics bars
+        // ════════════════════════════════
+        //  レポート
+        // ════════════════════════════════
         function renderReportChart() {
             const container = document.getElementById('report-chart-container');
-            
-            let totalSavingsOnly = goalsDataset.reduce((sum, g) => sum + g.currentAmount, 0);
-            let grandTotal = walletBalance + totalSavingsOnly;
-
-            if (grandTotal === 0) {
-                container.innerHTML = `<p class="text-xs text-neutral-400 py-6 text-center">お金が登録されていません</p>`;
-                return;
-            }
-
+            const totalSaved = goalsDataset.reduce((s, g) => s + g.currentAmount, 0);
+            const grand = walletBalance + totalSaved;
+            if (grand === 0) { container.innerHTML = `<p class="text-xs text-neutral-400 py-6 text-center">お金が登録されていません</p>`; return; }
             let html = `
                 <div>
                     <div class="flex justify-between text-xs font-medium text-neutral-700 mb-1">
-                        <span>自由に使えるお金 (生活費)</span><span>${((walletBalance / grandTotal) * 100).toFixed(1)}% (${formatCurrency(walletBalance)})</span>
+                        <span>生活費</span><span>${((walletBalance/grand)*100).toFixed(1)}% (${formatCurrency(walletBalance)})</span>
                     </div>
                     <div class="w-full bg-neutral-100 h-2.5 rounded-full overflow-hidden">
-                        <div class="bg-neutral-800 h-full rounded-full" style="width: ${(walletBalance / grandTotal) * 100}%"></div>
+                        <div class="bg-neutral-800 h-full rounded-full" style="width:${(walletBalance/grand)*100}%"></div>
                     </div>
-                </div>
-            `;
-
+                </div>`;
             goalsDataset.forEach(g => {
-                const ratio = grandTotal > 0 ? ((g.currentAmount / grandTotal) * 100).toFixed(1) : 0;
+                const r = ((g.currentAmount/grand)*100).toFixed(1);
                 html += `
                     <div class="mt-4">
                         <div class="flex justify-between text-xs font-medium text-neutral-700 mb-1">
-                            <span>${escapeHtml(g.name)}</span><span>${ratio}% (${formatCurrency(g.currentAmount)})</span>
+                            <span>${escapeHtml(g.name)}</span><span>${r}% (${formatCurrency(g.currentAmount)})</span>
                         </div>
                         <div class="w-full bg-neutral-100 h-2.5 rounded-full overflow-hidden">
-                            <div class="bg-amber-400 h-full rounded-full" style="width: ${ratio}%"></div>
+                            <div class="bg-amber-400 h-full rounded-full" style="width:${r}%"></div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
             container.innerHTML = html;
         }
 
-        // Switch Navigation dock tabs
+        // ════════════════════════════════
+        //  タブ切り替え
+        // ════════════════════════════════
         function switchTab(tabId) {
-            const panels = document.querySelectorAll('.view-panel');
-            panels.forEach(p => p.classList.remove('active'));
-
-            const buttons = document.querySelectorAll('.nav-btn, [id^="dock-"]');
-            buttons.forEach(b => {
-                b.classList.remove('text-amber-500');
-                b.classList.add('text-neutral-400');
+            document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('[id^="dock-"]').forEach(b => {
+                b.classList.remove('text-amber-500'); b.classList.add('text-neutral-400');
             });
-
-            const activePanel = document.getElementById(`view-${tabId}`);
-            if (activePanel) {
-                activePanel.classList.add('active');
-            }
-
-            const activeButton = document.getElementById(`dock-${tabId}`);
-            if (activeButton) {
-                activeButton.classList.remove('text-neutral-400');
-                activeButton.classList.add('text-amber-500');
-            }
-
-            if (tabId === 'record') {
-                syncGoalSelector();
-            }
+            document.getElementById(`view-${tabId}`)?.classList.add('active');
+            const btn = document.getElementById(`dock-${tabId}`);
+            if (btn) { btn.classList.remove('text-neutral-400'); btn.classList.add('text-amber-500'); }
+            if (tabId === 'record') syncGoalSelector();
+            if (tabId === 'calendar') renderCalendar();
         }
 
-        // Modal Helpers
-        function openModal(id) {
-            document.getElementById(id).classList.add('active');
-        }
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
-        }
+        function openModal(id)  { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function escapeHtml(s)  { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
 
-        // Safe HTML escaping
-        function escapeHtml(str) {
-            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
-        }
-
-        // Setup init states
         updateDashboardStates();
     </script>
 </body>
