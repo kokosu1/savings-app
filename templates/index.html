@@ -2,375 +2,462 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aesthetic Savings Dashboard</title>
-    <!-- Elegant, modern typography -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Stealth Obsidian Savings</title>
+    <!-- Premium Google Fonts (No-nonsense sans-serif typography) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js for minimalist visuals inside cards -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        /* CSS Variables for theme consistency */
+        /* --- Stealth Obsidian Design Tokens (Zero Fluff, High Contrast) --- */
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.45);
-            --glass-border: rgba(255, 255, 255, 0.35);
-            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
-            --text-main: #0f172a;
-            --text-muted: #475569;
-            --primary: #4f46e5;
-            --secondary: #0d9488;
+            --bg-base: #050505; /* Pure Deep Black */
+            --glass-bg: rgba(20, 20, 20, 0.85); /* Deep solid smoke obsidian */
+            --glass-border: rgba(255, 255, 255, 0.05); /* Stealth edge */
+            --glass-border-active: rgba(255, 255, 255, 0.12);
+            --text-main: #f3f4f6; /* Off-white */
+            --text-muted: #6b7280; /* Cool Gray */
+            --accent-red: #e11d48; /* Stealth Red (ThinkPad Red) */
+            --accent-white: #ffffff;
+            --danger: #ef4444;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif;
-            background: linear-gradient(135deg, #eef2f6 0%, #e0e7ff 50%, #f0fdf4 100%);
+            background-color: var(--bg-base);
             color: var(--text-main);
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-            padding: 30px 15px;
+            padding-bottom: 40px;
+            display: flex;
+            justify-content: center;
         }
 
-        /* Animated background mesh gradients for enhanced glassmorphism effect */
-        .bg-glow-1 {
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
-            top: 10%;
-            left: -100px;
+        /* --- Minimalist Background Sheen (No colorful orbs) --- */
+        .ambient-container {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
             z-index: 0;
+            overflow: hidden;
             pointer-events: none;
-            animation: floating 12s infinite alternate ease-in-out;
         }
 
-        .bg-glow-2 {
+        /* Sleek subtle gray vignette for depth */
+        .ambient-container::before {
+            content: '';
             position: absolute;
-            width: 500px;
-            height: 500px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(13, 148, 136, 0.15) 0%, transparent 70%);
-            bottom: 10%;
-            right: -150px;
+            width: 150%;
+            height: 150%;
+            top: -25%;
+            left: -25%;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.015) 0%, transparent 60%);
             z-index: 0;
-            pointer-events: none;
-            animation: floating 16s infinite alternate-reverse ease-in-out;
         }
 
-        @keyframes floating {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(50px, 30px) scale(1.1); }
-        }
-
+        /* --- Layout Container --- */
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 480px; /* Mobile viewport standard */
+            padding: 24px 16px;
             position: relative;
             z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        /* --- Header Styles (Glassmorphism card) --- */
+        /* --- Minimal Header --- */
         header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow);
-            border-radius: 24px;
-            padding: 24px 30px;
-            margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
+            padding: 8px 4px;
         }
 
-        .logo-section h1 {
-            font-size: 26px;
+        header h1 {
+            font-size: 18px;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .total-badge {
-            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(13, 148, 136, 0.1) 100%);
-            border: 1px solid rgba(79, 70, 229, 0.2);
-            padding: 10px 20px;
+        header h1 span {
+            color: var(--accent-red);
+        }
+
+        /* --- Stealth Wallet Banner --- */
+        .wallet-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
             border-radius: 16px;
+            padding: 20px 24px;
+            position: relative;
+            overflow: hidden;
             display: flex;
+            justify-content: space-between;
             align-items: center;
+        }
+
+        .wallet-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wallet-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .wallet-amount {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        /* Subtle indicator light */
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-red);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-red);
+        }
+
+        /* --- Goal List --- */
+        .goals-list {
+            display: flex;
+            flex-direction: column;
             gap: 12px;
         }
 
-        .total-badge i {
-            color: var(--primary);
-            font-size: 20px;
+        /* --- Stealth Interactive Card --- */
+        .goal-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
         }
 
-        .total-amount-label {
-            font-size: 13px;
-            color: var(--text-muted);
-            text-transform: uppercase;
+        .goal-card:active {
+            transform: scale(0.995);
+        }
+
+        .goal-card.expanded {
+            border-color: var(--glass-border-active);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .card-title h2 {
+            font-size: 15px;
             font-weight: 600;
-            letter-spacing: 0.5px;
+            color: #ffffff;
         }
 
-        .total-amount-value {
-            font-size: 22px;
+        .percent-badge {
+            font-size: 11px;
             font-weight: 700;
-            color: var(--text-main);
+            color: var(--accent-red);
+            background: rgba(225, 29, 72, 0.08);
+            border: 1px solid rgba(225, 29, 72, 0.15);
+            padding: 2px 8px;
+            border-radius: 4px;
         }
 
-        /* --- Action Buttons --- */
+        /* Progress line */
+        .progress-block {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            pointer-events: none;
+        }
+
+        .progress-track {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent-red);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .amount-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 11px;
+        }
+
+        .saved-numerical {
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .target-numerical {
+            color: var(--text-muted);
+        }
+
+        /* Minimal Toggle Indicator */
+        .tap-hint {
+            text-align: center;
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .tap-hint i {
+            transition: transform 0.25s ease;
+        }
+
+        .goal-card.expanded .tap-hint i {
+            transform: rotate(180deg);
+            color: var(--accent-red);
+        }
+
+        /* ───────────────── EXPANDABLE DETAILS AREA ───────────────── */
+        .detail-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            border-top: 1px solid transparent;
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        .goal-card.expanded .detail-section {
+            max-height: 500px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            padding-top: 14px;
+            margin-top: 2px;
+        }
+
+        /* Clean Split Grid */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 16px;
+            align-items: center;
+        }
+
+        /* Mono progress ring */
+        .chart-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        /* Timeline deposits list (Stealth Minimalist) */
+        .history-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 110px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .history-timeline::-webkit-scrollbar {
+            width: 3px;
+        }
+        .history-timeline::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1px;
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+        }
+
+        .timeline-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .timeline-amt {
+            font-size: 12px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .timeline-memo {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        .timeline-date {
+            font-size: 9px;
+            color: #4b5563;
+        }
+
+        /* Drawer Actions Bar */
+        .drawer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2px;
+        }
+
+        /* --- Buttons System --- */
         .btn {
             border: none;
             outline: none;
             cursor: pointer;
             font-family: inherit;
-            font-weight: 600;
-            border-radius: 14px;
-            transition: all 0.2s ease;
+            border-radius: 8px;
+            transition: all 0.15s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
+            font-weight: 600;
+            font-size: 12px;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
+        /* Round plus header button */
+        .btn-plus {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
             color: #ffffff;
-            padding: 12px 24px;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.25);
+            font-size: 14px;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35);
+        .btn-plus:active {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.6);
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--glass-border);
             color: var(--text-muted);
-            padding: 8px 16px;
+            padding: 8px 12px;
         }
 
-        .btn-secondary:hover {
+        .btn-glass:active {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        .btn-accent {
+            background: var(--accent-red);
+            color: #ffffff;
+            padding: 8px 14px;
+        }
+
+        .btn-accent:active {
+            opacity: 0.85;
+            transform: scale(0.98);
+        }
+
+        .btn-submit {
             background: #ffffff;
-            color: var(--text-main);
-        }
-
-        /* --- Main Goals Grid --- */
-        .goals-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        /* Empty state style */
-        .empty-state {
-            grid-column: 1 / -1;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 60px 40px;
-            text-align: center;
-            box-shadow: var(--glass-shadow);
-        }
-
-        .empty-state i {
-            font-size: 48px;
-            color: var(--primary);
-            opacity: 0.5;
-            margin-bottom: 20px;
-        }
-
-        .empty-state h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-            color: var(--text-main);
-        }
-
-        .empty-state p {
-            color: var(--text-muted);
-            margin-bottom: 20px;
-        }
-
-        /* --- Goal Card Design (Glassmorphism layout) --- */
-        .goal-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow);
-            border-radius: 24px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .goal-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.12);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-        }
-
-        .card-header h2 {
-            font-size: 20px;
+            color: #000000;
+            padding: 12px;
+            border-radius: 8px;
             font-weight: 700;
-            color: var(--text-main);
-            line-height: 1.3;
+            width: 100%;
+            margin-top: 8px;
         }
 
-        .delete-btn {
+        .btn-submit:active {
+            opacity: 0.9;
+        }
+
+        .btn-delete {
             background: transparent;
             border: none;
-            color: #ef4444;
+            color: var(--text-muted);
             opacity: 0.6;
+            padding: 8px 4px;
             cursor: pointer;
-            font-size: 16px;
-            padding: 4px;
-            border-radius: 8px;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
+            font-size: 12px;
         }
 
-        .delete-btn:hover {
+        .btn-delete:hover {
+            color: var(--danger);
             opacity: 1;
-            background: rgba(239, 68, 68, 0.08);
         }
 
-        /* Center Ring Progress section */
-        .progress-section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 24px;
-            position: relative;
-        }
-
-        .progress-ring-container {
-            position: relative;
-            width: 150px;
-            height: 150px;
-        }
-
-        .progress-ring {
-            transform: rotate(-90deg);
-        }
-
-        .progress-ring__circle-bg {
-            stroke: rgba(79, 70, 229, 0.06);
-        }
-
-        .progress-ring__circle {
-            stroke-dasharray: 377;
-            stroke-dashoffset: 377;
-            stroke-linecap: round;
-            transition: stroke-dashoffset 0.8s ease;
-        }
-
-        .progress-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-
-        .progress-percentage {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-main);
-            display: block;
-        }
-
-        .progress-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
-
-        /* Card details values */
-        .card-amounts {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.3);
-            padding: 12px 16px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .amount-item span {
-            display: block;
-        }
-
-        .amount-title {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .amount-value {
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        .amount-value.saved {
-            color: var(--primary);
-        }
-
-        .card-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        /* --- Modal Design (Glassmorphism layout) --- */
+        /* --- Modals & Dark Inputs --- */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 23, 42, 0.3);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 100;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 200;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.2s ease;
         }
 
         .modal-overlay.active {
@@ -379,17 +466,15 @@
         }
 
         .modal-container {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
-            border-radius: 28px;
+            background: #0f0f0f;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
             width: 90%;
-            max-width: 480px;
-            padding: 30px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
+            max-width: 350px;
+            padding: 24px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+            transform: scale(0.97);
+            transition: transform 0.2s ease;
         }
 
         .modal-overlay.active .modal-container {
@@ -400,270 +485,215 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 18px;
         }
 
         .modal-header h3 {
-            font-size: 22px;
+            font-size: 15px;
             font-weight: 700;
-            color: var(--text-main);
+            letter-spacing: -0.2px;
         }
 
         .close-modal {
             background: transparent;
             border: none;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
             color: var(--text-muted);
             padding: 4px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
         }
 
         .close-modal:hover {
-            background: rgba(0,0,0,0.05);
-            color: var(--text-main);
+            color: #ffffff;
         }
 
-        /* Form Controls */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 14px;
         }
 
         .form-group label {
             display: block;
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 8px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .form-control {
+        .form-input {
             width: 100%;
-            background: rgba(255, 255, 255, 0.5);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 12px 16px;
+            background: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 10px 12px;
             font-family: inherit;
-            font-size: 16px;
-            color: var(--text-main);
+            font-size: 14px;
+            color: #ffffff;
             outline: none;
-            transition: all 0.2s ease;
+            transition: border-color 0.2s;
         }
 
-        .form-control:focus {
-            background: #ffffff;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        .form-input:focus {
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* Quick Amount Suggestion Chips */
-        .chips-container {
+        .chip-container {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
         }
 
         .chip {
-            background: rgba(255, 255, 255, 0.6);
-            border: 1px solid var(--glass-border);
-            padding: 6px 14px;
-            border-radius: 10px;
-            font-size: 13px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            color: var(--text-muted);
         }
 
-        .chip:hover {
-            background: var(--primary);
+        .chip:active {
+            background: rgba(255, 255, 255, 0.06);
             color: #ffffff;
-            border-color: var(--primary);
         }
 
-        /* Deposit History Modal items */
-        .history-list {
-            max-height: 250px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            border-radius: 12px;
-            padding-right: 5px;
+        .empty-state {
+            padding: 50px 10px;
+            text-align: center;
         }
 
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .empty-state i {
+            font-size: 24px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
         }
 
-        .history-item:last-child {
-            margin-bottom: 0;
+        .empty-state h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
         }
 
-        .history-info span {
-            display: block;
-        }
-
-        .history-amount {
-            font-weight: 700;
-            color: var(--secondary);
-            font-size: 15px;
-        }
-
-        .history-memo {
+        .empty-state p {
             font-size: 12px;
             color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .history-date {
-            font-size: 11px;
-            color: #94a3b8;
         }
     </style>
 </head>
 <body>
 
-    <!-- Ambient glow decorative spots -->
-    <div class="bg-glow-1"></div>
-    <div class="bg-glow-2"></div>
+    <!-- Stealth subtle background glow -->
+    <div class="ambient-container"></div>
 
     <div class="container">
-        <!-- --- Header --- -->
+        <!-- --- Top Stealth Header --- -->
         <header>
             <div class="logo-section">
-                <h1><i class="fa-solid fa-sparkles"></i> Sparkly Savings</h1>
+                <h1>Obsidian<span>.</span></h1>
             </div>
-            
-            <div class="total-badge">
-                <i class="fa-solid fa-piggy-bank"></i>
-                <div>
-                    <span class="total-amount-label">トータル貯金額</span>
-                    <span class="total-amount-value" id="global-total">¥0</span>
-                </div>
-            </div>
-            
-            <button class="btn btn-primary" onclick="openModal('addGoalModal')">
-                <i class="fa-solid fa-plus"></i> 新しい目標を追加
+            <button class="btn btn-plus" onclick="openModal('addGoalModal')" title="目標を追加">
+                <i class="fa-solid fa-plus"></i>
             </button>
         </header>
 
-        <!-- --- Goals List Area --- -->
-        <main class="goals-grid" id="goals-container">
-            <!-- Dynamic Cards injected here -->
+        <!-- --- Stealth Wallet (Total Balance) --- -->
+        <div class="wallet-card">
+            <div class="wallet-info">
+                <span class="wallet-label">トータル貯金合計</span>
+                <span class="wallet-amount" id="global-total">¥0</span>
+            </div>
+            <div class="status-dot" title="Database Connected"></div>
+        </div>
+
+        <!-- --- Goal Cards Stack --- -->
+        <main class="goals-list" id="goals-container">
             <div class="empty-state">
-                <i class="fa-solid fa-face-smile"></i>
-                <h3>貯金目標を設定しましょう</h3>
-                <p>最初の目標を追加して、楽しい貯金生活をスタート！</p>
-                <button class="btn btn-primary" onclick="openModal('addGoalModal')">最初の目標を追加</button>
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+                <h3>起動中</h3>
             </div>
         </main>
     </div>
 
-    <!-- ── 1. 目標追加 モーダル ────────────────────────────── -->
+    <!-- ── 1. Create New Goal Popup Modal ── -->
     <div class="modal-overlay" id="addGoalModal">
         <div class="modal-container">
             <div class="modal-header">
-                <h3>目標を作成</h3>
+                <h3>目標を追加</h3>
                 <button class="close-modal" onclick="closeModal('addGoalModal')">&times;</button>
             </div>
             <form id="add-goal-form" onsubmit="submitAddGoal(event)">
                 <div class="form-group">
-                    <label for="goal-name">目標の名前</label>
-                    <input type="text" id="goal-name" class="form-control" placeholder="例：普通車MT免許代、温泉旅行" required>
+                    <label for="goal-name">目標名</label>
+                    <input type="text" id="goal-name" class="form-input" placeholder="例: 普通車MT免許代" required>
                 </div>
                 <div class="form-group">
                     <label for="goal-target">目標金額 (円)</label>
-                    <input type="number" id="goal-target" class="form-control" placeholder="例：340000" min="1" required>
+                    <input type="number" id="goal-target" class="form-input" placeholder="例: 340000" min="1" required>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">目標を作成する</button>
+                <button type="submit" class="btn btn-submit">登録</button>
             </form>
         </div>
     </div>
 
-    <!-- ── 2. 入金 モーダル ────────────────────────────── -->
+    <!-- ── 2. Deposit Action Popup Modal ── -->
     <div class="modal-overlay" id="depositModal">
         <div class="modal-container">
             <div class="modal-header">
-                <h3>貯金を記録する</h3>
+                <h3>貯金を記録</h3>
                 <button class="close-modal" onclick="closeModal('depositModal')">&times;</button>
             </div>
             <form id="deposit-form" onsubmit="submitDeposit(event)">
                 <input type="hidden" id="deposit-goal-id">
                 <div class="form-group">
                     <label for="deposit-amount">入金額 (円)</label>
-                    <input type="number" id="deposit-amount" class="form-control" placeholder="金額を入力" min="1" required>
-                    <div class="chips-container">
-                        <div class="chip" onclick="setQuickAmount(1000)">+¥1,000</div>
-                        <div class="chip" onclick="setQuickAmount(5000)">+¥5,000</div>
-                        <div class="chip" onclick="setQuickAmount(10000)">+¥10,000</div>
+                    <input type="number" id="deposit-amount" class="form-input" placeholder="金額を入力" min="1" required>
+                    <div class="chip-container">
+                        <div class="chip" onclick="setQuickAmount(1000)">+1,000</div>
+                        <div class="chip" onclick="setQuickAmount(5000)">+5,000</div>
+                        <div class="chip" onclick="setQuickAmount(10000)">+10,000</div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="deposit-memo">メモ (任意)</label>
-                    <input type="text" id="deposit-memo" class="form-control" placeholder="例：バイト代から、お釣り">
+                    <label for="deposit-memo">メモ</label>
+                    <input type="text" id="deposit-memo" class="form-input" placeholder="例: お釣り、バイト代から">
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">入金を確定する</button>
+                <button type="submit" class="btn btn-submit" style="background:var(--accent-red); color:#ffffff;">入金を確定</button>
             </form>
         </div>
     </div>
 
-    <!-- ── 3. 入金履歴 モーダル ────────────────────────────── -->
-    <div class="modal-overlay" id="historyModal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 id="history-modal-title">入金履歴</h3>
-                <button class="close-modal" onclick="closeModal('historyModal')">&times;</button>
-            </div>
-            <div class="history-list" id="history-container">
-                <!-- Injected dynamically -->
-            </div>
-            <button class="btn btn-secondary" onclick="closeModal('historyModal')" style="width: 100%">閉じる</button>
-        </div>
-    </div>
-
-    <!-- ── Javascript Logic & API Integration ── -->
+    <!-- ── Client Logic System ── -->
     <script>
-        // Load on start
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchGoals();
-        });
+        let goalsData = [];
+        let chartInstances = {};
 
-        // Helper to format currency values
+        document.addEventListener('DOMContentLoaded', () => fetchGoals());
+
         function formatCurrency(val) {
             return '¥' + parseInt(val).toLocaleString();
         }
 
-        // ── API: Load all goals and build cards ──
         async function fetchGoals() {
             try {
                 const res = await fetch('/api/goals');
-                const goals = await res.json();
-                renderGoals(goals);
+                goalsData = await res.json();
+                renderHome();
             } catch (err) {
-                console.error("Failed to load goals", err);
+                console.error("Database disconnected", err);
             }
         }
 
-        function renderGoals(goals) {
+        function renderHome() {
             const container = document.getElementById('goals-container');
-            
-            if (goals.length === 0) {
+            if (goalsData.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <i class="fa-solid fa-face-smile"></i>
-                        <h3>貯金目標を設定しましょう</h3>
-                        <p>最初の目標を追加して、楽しい貯金生活をスタート！</p>
-                        <button class="btn btn-primary" onclick="openModal('addGoalModal')">最初の目標を追加</button>
+                        <i class="fa-solid fa-cube"></i>
+                        <h3>目標が設定されていません</h3>
+                        <p>右上の「＋」から新しい貯金目標を追加してください。</p>
                     </div>
                 `;
                 document.getElementById('global-total').innerText = '¥0';
@@ -673,64 +703,57 @@
             let html = '';
             let globalTotal = 0;
 
-            goals.forEach(g => {
+            goalsData.forEach(g => {
                 globalTotal += g.saved;
                 const percent = Math.min(Math.round((g.saved / g.target) * 100), 100);
-                
-                // SVG ring offset (circumference of r=60 is 2 * PI * 60 ≈ 377)
-                const circumference = 377;
-                const offset = circumference - (percent / 100) * circumference;
 
                 html += `
-                    <div class="goal-card" id="goal-${g.id}">
-                        <div class="card-header">
-                            <h2>${escapeHtml(g.name)}</h2>
-                            <button class="delete-btn" onclick="deleteGoal(${g.id})" title="目標を削除">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
+                    <div class="goal-card" onclick="toggleCard(event, this, ${g.id})" data-id="${g.id}">
+                        <div class="card-header-row">
+                            <div class="card-title">
+                                <h2>${escapeHtml(g.name)}</h2>
+                            </div>
+                            <span class="percent-badge">${percent}%</span>
                         </div>
 
-                        <div class="progress-section">
-                            <div class="progress-ring-container">
-                                <svg class="progress-ring" width="150" height="150">
-                                    <!-- Background circle track -->
-                                    <circle class="progress-ring__circle-bg" stroke-width="8" fill="transparent" r="60" cx="75" cy="75" />
-                                    <!-- Colored progress bar inside -->
-                                    <circle class="progress-ring__circle" stroke="url(#gradient-${g.id})" stroke-width="8" fill="transparent" r="60" cx="75" cy="75" style="stroke-dashoffset: ${offset};" />
-                                    
-                                    <!-- Linear Gradient per card to avoid color issues -->
-                                    <defs>
-                                        <linearGradient id="gradient-${g.id}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" stop-color="var(--primary)" />
-                                            <stop offset="100%" stop-color="var(--secondary)" />
-                                        </linearGradient>
-                                    </defs>
-                                </svg>
-                                <div class="progress-text">
-                                    <span class="progress-percentage">${percent}%</span>
-                                    <span class="progress-label">達成率</span>
+                        <div class="progress-block">
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: ${percent}%;"></div>
+                            </div>
+                            <div class="amount-info">
+                                <div>
+                                    <span class="saved-numerical">${formatCurrency(g.saved)}</span>
+                                    <span class="target-numerical"> / ${formatCurrency(g.target)}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="card-amounts">
-                            <div class="amount-item">
-                                <span class="amount-title">貯まった額</span>
-                                <span class="amount-value saved">${formatCurrency(g.saved)}</span>
+                        <!-- ── EXPANDABLE DETAIL DRAWER AREA ── -->
+                        <div class="detail-section" onclick="event.stopPropagation()">
+                            <div class="detail-grid">
+                                <!-- Minimal Mono Ring Chart -->
+                                <div class="chart-wrapper">
+                                    <canvas id="miniChart-${g.id}"></canvas>
+                                </div>
+                                
+                                <!-- Inside-card Scrollable Timeline -->
+                                <div class="history-timeline" id="timeline-${g.id}">
+                                    <p style="font-size:10px; color:var(--text-muted); text-align:center; padding:10px;">読込中</p>
+                                </div>
                             </div>
-                            <div class="amount-item" style="text-align: right;">
-                                <span class="amount-title">目標金額</span>
-                                <span class="amount-value">${formatCurrency(g.target)}</span>
+
+                            <div class="drawer-actions">
+                                <button class="btn btn-delete" onclick="deleteGoal(event, ${g.id})">
+                                    <i class="fa-solid fa-trash-can"></i> 削除
+                                </button>
+                                <button class="btn btn-accent" onclick="triggerDepositModal(event, ${g.id})">
+                                    <i class="fa-solid fa-plus"></i> 貯金
+                                </button>
                             </div>
                         </div>
 
-                        <div class="card-actions">
-                            <button class="btn btn-secondary" onclick="viewHistory(${g.id}, '${escapeHtml(g.name)}')">
-                                <i class="fa-solid fa-list-ul"></i> 履歴
-                            </button>
-                            <button class="btn btn-primary" onclick="triggerDepositModal(${g.id})">
-                                <i class="fa-solid fa-piggy-bank"></i> 貯金する
-                            </button>
+                        <div class="tap-hint">
+                            <i class="fa-solid fa-chevron-down"></i>
                         </div>
                     </div>
                 `;
@@ -740,42 +763,127 @@
             document.getElementById('global-total').innerText = formatCurrency(globalTotal);
         }
 
-        // Helper to avoid script injection
+        function toggleCard(event, cardElement, goalId) {
+            if (event.target.closest('.btn') || event.target.closest('.detail-section')) {
+                return;
+            }
+
+            const isExpanded = cardElement.classList.contains('expanded');
+            
+            document.querySelectorAll('.goal-card').forEach(card => {
+                if (card !== cardElement) {
+                    card.classList.remove('expanded');
+                }
+            });
+
+            if (isExpanded) {
+                cardElement.classList.remove('expanded');
+            } else {
+                cardElement.classList.add('expanded');
+                loadCardDetails(goalId);
+            }
+        }
+
+        async function loadCardDetails(goalId) {
+            const goalObj = goalsData.find(g => g.id === goalId);
+            if (!goalObj) return;
+
+            // Render minimalist monochrome ring
+            setTimeout(() => {
+                renderMiniChart(goalId, goalObj.saved, goalObj.target);
+            }, 50);
+
+            const timelineContainer = document.getElementById(`timeline-${goalId}`);
+            try {
+                const res = await fetch(`/api/goals/${goalId}/deposits`);
+                const history = await res.json();
+                
+                if (history.length === 0) {
+                    timelineContainer.innerHTML = '<p style="text-align:center; padding:20px 10px; font-size:10px; color:var(--text-muted);">履歴はありません</p>';
+                    return;
+                }
+
+                let html = '';
+                history.forEach(item => {
+                    const d = new Date(item.created_at);
+                    const dateStr = isNaN(d) ? item.created_at : `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+                    html += `
+                        <div class="timeline-item">
+                            <div class="timeline-left">
+                                <span class="timeline-amt">+${formatCurrency(item.amount)}</span>
+                                <span class="timeline-memo">${escapeHtml(item.memo || 'なし')}</span>
+                            </div>
+                            <span class="timeline-date">${dateStr}</span>
+                        </div>
+                    `;
+                });
+                timelineContainer.innerHTML = html;
+            } catch (err) {
+                timelineContainer.innerHTML = '<p style="font-size:10px; color:var(--danger)">接続エラー</p>';
+            }
+        }
+
+        function renderMiniChart(id, saved, target) {
+            const canvasId = `miniChart-${id}`;
+            const canvasElement = document.getElementById(canvasId);
+            if (!canvasElement) return;
+
+            const ctx = canvasElement.getContext('2d');
+            if (chartInstances[id]) {
+                chartInstances[id].destroy();
+            }
+
+            const remaining = Math.max(target - saved, 0);
+
+            chartInstances[id] = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [saved, remaining],
+                        // White / Dark Gray for minimalist contrast
+                        backgroundColor: ['#ffffff', 'rgba(255, 255, 255, 0.03)'],
+                        borderColor: 'transparent',
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '80%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+        }
+
         function escapeHtml(str) {
             return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
         }
 
-        // ── API: Add New Goal ──
         async function submitAddGoal(event) {
             event.preventDefault();
-            const nameInput = document.getElementById('goal-name');
-            const targetInput = document.getElementById('goal-target');
+            const name = document.getElementById('goal-name').value;
+            const target = document.getElementById('goal-target').value;
 
             try {
                 const res = await fetch('/api/goals', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: nameInput.value,
-                        target: parseFloat(targetInput.value)
-                    })
+                    body: JSON.stringify({ name: name, target: parseFloat(target) })
                 });
-
                 if (res.ok) {
-                    nameInput.value = '';
-                    targetInput.value = '';
+                    document.getElementById('goal-name').value = '';
+                    document.getElementById('goal-target').value = '';
                     closeModal('addGoalModal');
                     fetchGoals();
-                } else {
-                    alert('目標の追加に失敗しました。');
                 }
-            } catch (err) {
-                console.error("Error creating goal", err);
-            }
+            } catch (err) { console.error(err); }
         }
 
-        // ── API: Quick Deposit Trigger ──
-        function triggerDepositModal(id) {
+        function triggerDepositModal(event, id) {
+            event.stopPropagation();
             document.getElementById('deposit-goal-id').value = id;
             document.getElementById('deposit-amount').value = '';
             document.getElementById('deposit-memo').value = '';
@@ -796,88 +904,32 @@
                 const res = await fetch(`/api/goals/${id}/deposits`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        amount: parseFloat(amount),
-                        memo: memo
-                    })
+                    body: JSON.stringify({ amount: parseFloat(amount), memo: memo })
                 });
-
                 if (res.ok) {
                     closeModal('depositModal');
-                    fetchGoals();
-                } else {
-                    alert('入金に失敗しました。');
+                    await fetchGoals();
+                    
+                    const activeCard = document.querySelector(`.goal-card[data-id="${id}"]`);
+                    if (activeCard) {
+                        activeCard.classList.add('expanded');
+                        loadCardDetails(parseInt(id));
+                    }
                 }
-            } catch (err) {
-                console.error("Error making deposit", err);
-            }
+            } catch (err) { console.error(err); }
         }
 
-        // ── API: View Deposit History ──
-        async function viewHistory(id, name) {
-            document.getElementById('history-modal-title').innerText = `${name} の履歴`;
-            const container = document.getElementById('history-container');
-            container.innerHTML = '<p style="text-align:center; padding: 20px; color: var(--text-muted);">読み込み中...</p>';
-            
-            openModal('historyModal');
-
-            try {
-                const res = await fetch(`/api/goals/${id}/deposits`);
-                const history = await res.json();
-
-                if (history.length === 0) {
-                    container.innerHTML = '<p style="text-align:center; padding: 40px 20px; color: var(--text-muted);"><i class="fa-solid fa-folder-open" style="font-size:24px; display:block; margin-bottom:10px; opacity:0.5;"></i>履歴はまだありません。</p>';
-                    return;
-                }
-
-                let html = '';
-                history.forEach(item => {
-                    // Quick date cleanups for better UI presentation
-                    const dateObj = new Date(item.created_at);
-                    const formattedDate = isNaN(dateObj) ? item.created_at : `${dateObj.getMonth() + 1}/${dateObj.getDate()} ${dateObj.getHours()}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
-
-                    html += `
-                        <div class="history-item">
-                            <div class="history-info">
-                                <span class="history-amount">+${formatCurrency(item.amount)}</span>
-                                <span class="history-memo">${escapeHtml(item.memo || 'メモなし')}</span>
-                            </div>
-                            <span class="history-date">${formattedDate}</span>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-            } catch (err) {
-                container.innerHTML = '<p style="text-align:center; color: #ef4444; padding:20px;">履歴の取得に失敗しました。</p>';
-            }
-        }
-
-        // ── API: Delete Goal ──
-        async function deleteGoal(id) {
-            if (!confirm('この目標を削除してもよろしいですか？\n(これまでの入金データも一緒に削除されます)')) {
-                return;
-            }
-
+        async function deleteGoal(event, id) {
+            event.stopPropagation();
+            if (!confirm('この目標を削除しますか？\n(履歴もすべて消去されます)')) return;
             try {
                 const res = await fetch(`/api/goals/${id}`, { method: 'DELETE' });
-                if (res.ok) {
-                    fetchGoals();
-                } else {
-                    alert('削除に失敗しました。');
-                }
-            } catch (err) {
-                console.error("Error deleting goal", err);
-            }
+                if (res.ok) fetchGoals();
+            } catch (err) { console.error(err); }
         }
 
-        // ── Modal UI Helpers ──
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     </script>
 </body>
 </html>
