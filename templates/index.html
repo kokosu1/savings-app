@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -305,10 +304,9 @@
 
     <!-- ── CORE SCRIPT ── -->
     <script>
-        // Start with only the "Wallet (生活費)" as our core transaction asset
-        let walletBalance = 150000; // Simulated default starting pocket money
+        // FIXED: Wallet starting balance is now cleanly initialized to 0
+        let walletBalance = 0; 
         
-        // Clean goal targets portfolio
         let goalsDataset = [];
         let transactionHistory = [];
         let currentRecordType = "deposit"; // "deposit", "transfer", "expense"
@@ -581,7 +579,6 @@
                     time: new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
                 });
             } else if (currentRecordType === 'transfer') {
-                // FIXED: DOMから確実に最新のセレクトボックスの値を安定して読み出す
                 const selectEl = document.getElementById('record-goal-select');
                 if (!selectEl) {
                     alert("仕分け先の目標を選択してください。");
@@ -788,5 +785,3 @@
     </script>
 </body>
 </html>
-
-```
